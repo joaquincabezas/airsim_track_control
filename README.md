@@ -12,12 +12,16 @@ Installation:
 
 Instructions:
  1. Open an AirSim scenario
+ 
       1.1 Edit run.bat to "start AirSimNH -windowed -ResX=640 -ResY=480")
  2. Select the color of the object in the code, in the module variables
  3. Execute this script and check the camera is properly working
  4. Use a object to control the car:
+ 
       4.1 Centered object: No movement
+      
       4.2 Vertical axis: Throttle (up makes the car go forward, down goes backwards)
+      
       4.3 Horizontal axis: Steer to the right or left
 
 Tested Neighborhood binary for Windows:
