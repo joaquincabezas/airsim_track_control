@@ -60,7 +60,12 @@ CONTROL_STEERING_THRESHOLD = 0.1
 # Rate in seconds
 REFRESH_RATE = 0.1
 
-EXIT_KEY = 'x'
+EXIT_KEY = 'q'
+
+FONT_FACE = cv2.FONT_HERSHEY_SIMPLEX
+FONT_SCALE = 1
+FONT_COLOR = (255, 255, 255)
+
 
 def connect_airsim():
     """Connect to to the airsim simulator.
@@ -147,7 +152,7 @@ def main():
         · Connect to webcam
         · Track in loop the position of an object based in the color
         · Send control actions depending upon the tracking on the object
-        · Waits for 'x' to be terminated
+        · Waits for 'q' to be terminated
 
     """
 
@@ -177,7 +182,7 @@ def main():
 
         # We fin a number of contours on the mask
         contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-
+        frame_msg = None
         if len(contours) > 0:
             # We pick the biggest contour and find its center
             contour = max(contours, key=cv2.contourArea)
@@ -192,6 +197,8 @@ def main():
                 throttle, steering = coordinates_to_controls(coordinate_x, coordinate_y)
                 status_controls = send_controls(client, car_controls, status_controls,
                                                 throttle, steering)
+                frame_msg = "Throttle: " + str(round(throttle, 2))
+                frame_msg = frame_msg + " - Steering: " + str(round(steering, 2))
         else:
             # If no object is tracked, we stop the car
             status_controls = send_controls(client, car_controls, status_controls, 0, 0)
@@ -199,6 +206,9 @@ def main():
         # To ease self identification, we flip the image so it acts as a mirror
         frame = cv2.flip(frame, 1)
 
+        # We show the messsage with the control action being sent to Airsim
+        if frame_msg:
+            cv2.putText(frame, frame_msg, (20, 30), FONT_FACE, FONT_SCALE, FONT_COLOR)
         cv2.imshow("Frame", frame)
 
         # Finish execution by pressing the EXIT_KEY
